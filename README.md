@@ -1,8 +1,13 @@
 # Phan-loai-linh-kien-dien
- Bộ phân loại linh kiện điện tử
-Hệ thống phân loại hệ thống điện tử tự động sử dụng EfficiencyNet-B3 — nhận đầu vào hình ảnh và trả về độ tin cậy đính kèm dự kiến ​​​​top 5.
+  Electronic Component Classifier
 
- Nội dung repo
+Hệ thống phân loại linh kiện điện tử tự động sử dụng **EfficientNet-B3** — nhận ảnh đầu vào và trả về top-5 dự đoán kèm độ tin cậy.
+
+---
+
+##  Nội dung repo
+
+```
 .
 ├── best_model.pth                  # Checkpoint model tốt nhất (EfficientNet-B3)
 ├── electronic_classifier.pth       # Checkpoint model từ lần train gần nhất
@@ -10,17 +15,27 @@ Hệ thống phân loại hệ thống điện tử tự động sử dụng Eff
 ├── class_names.json                # Danh sách 36 class linh kiện
 ├── demo.py                         # Script chạy demo dự đoán
 └── train_model.py                  # Script huấn luyện model
+```
 
-🔧 Yêu cầu cài đặt
-đậppip install torch torchvision pillow
+---
+
+##  Yêu cầu cài đặt
+
+```bash
+pip install torch torchvision pillow
 pip install matplotlib   # Tuỳ chọn — để hiển thị đồ thị
+```
 
-GPU: Nếu có GPU, PyTorch sẽ tự động sử dụng. Nếu không, CPU vẫn hoạt động nhưng sẽ chậm hơn khi đào tạo. Khuyến nghị sử dụng Google Colab cho công việc huấn luyện.
+> **GPU:** Nếu có GPU, PyTorch sẽ tự động sử dụng. Nếu không, CPU vẫn hoạt động nhưng sẽ chậm hơn khi train. Khuyến nghị dùng [Google Colab](https://colab.research.google.com/) cho việc huấn luyện.
 
+---
 
-🚀 Hướng dẫn sử dụng
-Chạy demo dự đoán
-đập# Chọn ảnh qua hộp thoại (GUI)
+##  Hướng dẫn sử dụng
+
+### Chạy demo dự đoán
+
+```bash
+# Chọn ảnh qua hộp thoại (GUI)
 python demo.py
 
 # Chỉ định ảnh trực tiếp
@@ -31,7 +46,11 @@ python demo.py --folder path/to/folder/
 
 # Không hiển thị đồ thị (chỉ in kết quả ra terminal)
 python demo.py --image path/to/image.jpg --no-plot
-Ví dụ đầu ra:
+```
+
+**Ví dụ output:**
+
+```
 ==================================================
   Ảnh : transistor_01.jpg
 ==================================================
@@ -39,9 +58,13 @@ Ví dụ đầu ra:
   [2] PNP-transistor                        8.1%  ██
   [3] semiconductor-diode                   2.4%  
   [4] transistor                            1.6%  
-  [5] semi-conductor                        0.6%
-Use model in code Python
-Pythonimport torch, json
+  [5] semi-conductor                        0.6%  
+```
+
+### Sử dụng model trong code Python
+
+```python
+import torch, json
 from torchvision import models, transforms
 from PIL import Image
 
@@ -75,10 +98,17 @@ with torch.no_grad():
 
 for p, i in zip(top5.values, top5.indices):
     print(f'{names[i]}: {p*100:.1f}%')
+```
 
- Mô hình huấn luyện lại
-chuẩn bị dữ liệu
-Sắp xếp ảnh theo thư mục cấu hình ImageFoldercủa PyTorch:
+---
+
+##  Huấn luyện lại model
+
+### Chuẩn bị dữ liệu
+
+Sắp xếp ảnh theo cấu trúc thư mục `ImageFolder` của PyTorch:
+
+```
 images/
 ├── transistor/
 │   ├── img001.jpg
@@ -88,21 +118,48 @@ images/
 │   └── ...
 └── microchip/
     └── ...
-Tập lệnh tự động tìm dữ liệu thư mục theo thứ tự ưu tiên: images/→ data/→ dataset/→ cùng thư mục với tập lệnh.
-chạy huấn luyện
-đậppython train_model.py
-Quá trình đào tạo gồm 2 giai đoạn:
-Giai đoạnMô tảEpochs mặc địnhTốc độ học tậpGiai đoạn 1 — Khởi độngĐóng băng xương sống, chỉ đào tạo đầu phân loại51e-3Giai đoạn 2 — Tinh chỉnhMở toàn bộ mô hình, tinh chỉnh từ đầu đến cuốitối đa 305e-5
+```
 
-Dừng sớm tự động dừng nếu độ chính xác xác thực không cải thiện sau 7 kỷ nguyên liên tiếp
-Model tốt nhất (val acc cao nhất) được lưu vàoelectronic_classifier.pth
-Tên lớp được lưu vàoclass_names.json
+Script tự động tìm thư mục data theo thứ tự ưu tiên: `images/` → `data/` → `dataset/` → cùng thư mục với script.
 
+### Chạy training
 
- Danh sách lớp 36
-Tụ điện bypassTụ điện phânMạch vi tích hợpDẪN ĐẾNTransistor PNPphần ứngbộ suy giảmcầu chì hộpkẹp-dây dẫnrơle điệnsợitản nhiệtcuộn cảm ứngdây cáp nốibóng bán dẫn nốimạch đènbộ giới hạn-cắtbộ dao động cục bộchip nhớvi mạchbộ vi xử lýbộ ghép kênhĂng-ten đa hướngbộ chia điện thếchiết ápmáy phát xungrơlebiến trởchất bán dẫnđiốt bán dẫnđường vòngvan điện từbộ ổn địnhmáy biến áp hạ ápmáy biến áp tăng ápbóng bán dẫn
+```bash
+python train_model.py
+```
 
- Kiến trúc mẫu
+**Quá trình training gồm 2 giai đoạn:**
+
+| Giai đoạn | Mô tả | Epochs mặc định | Learning Rate |
+|---|---|---|---|
+| Phase 1 — Warm-up | Đóng băng backbone, chỉ train classifier head | 5 | `1e-3` |
+| Phase 2 — Fine-tune | Mở toàn bộ model, fine-tune end-to-end | tối đa 30 | `5e-5` |
+
+- Early stopping tự động dừng nếu validation accuracy không cải thiện sau **7 epoch liên tiếp**
+- Model tốt nhất (val acc cao nhất) được lưu vào `electronic_classifier.pth`
+- Class names được lưu vào `class_names.json`
+
+---
+
+##  Danh sách 36 class
+
+| | | | |
+|---|---|---|---|
+| Bypass-capacitor | Electrolytic-capacitor | Integrated-micro-circuit | LED |
+| PNP-transistor | armature | attenuator | cartridge-fuse |
+| clip-lead | electric-relay | filament | heat-sink |
+| induction-coil | jumper-cable | junction-transistor | light-circuit |
+| limiter-clipper | local-oscillator | memory-chip | microchip |
+| microprocessor | multiplexer | omni-directional-antenna | potential-divider |
+| potentiometer | pulse-generator | relay | rheostat |
+| semi-conductor | semiconductor-diode | shunt | solenoid |
+| stabilizer | step-down-transformer | step-up-transformer | transistor |
+
+---
+
+##  Kiến trúc model
+
+```
 EfficientNet-B3 (pretrained ImageNet)
 └── Classifier head (tuỳ chỉnh):
     ├── Dropout(0.5)
@@ -110,20 +167,26 @@ EfficientNet-B3 (pretrained ImageNet)
     ├── ReLU
     ├── Dropout(0.3)
     └── Linear(512 → 36 classes)
-Tăng cường dữ liệu khi huấn luyện:
+```
 
-Cắt ngẫu nhiên, lật ngang/dọc, hiệu ứng rung màu, xoay ±30°
-Ảnh xám ngẫu nhiên (5%), Xóa/Cắt ngẫu nhiên (20%)
-Chuẩn hóa theo giá trị trung bình/độ lệch chuẩn của ImageNet.
+**Data augmentation khi train:**
+- Random crop, horizontal/vertical flip, color jitter, rotation ±30°
+- Random grayscale (5%), Random Erasing / Cutout (20%)
+- Normalize theo ImageNet mean/std
 
-Hàm mất mát: CrossEntropyLoss với làm mịn nhãn Trình 0.1
-tối ưu hóa: AdamW, giảm trọng lượng 1e-2
-Bộ lập lịch: Cosine Annealing LR
+**Loss:** CrossEntropyLoss với label smoothing `0.1`  
+**Optimizer:** AdamW, weight decay `1e-2`  
+**Scheduler:** Cosine Annealing LR
 
-📁 Điểm kiểm tra dạng định dạng
-Python{
+---
+
+##  Định dạng checkpoint
+
+```python
+{
     'model_state_dict': ...,   # Trọng số model
     'class_names':      [...], # Danh sách tên class
     'num_classes':      36,    # Số lượng class
     'val_acc':          0.xx,  # Val accuracy tốt nhất
 }
+```
